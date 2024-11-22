@@ -8,7 +8,6 @@ This project is an implementation of the popular game 2048, featuring a reinforc
 - **Reinforcement Learning Agent**: The agent learns to play the game using the Q-learning algorithm.
 - **GUI for Model Management**: Manage training models (create, load, or save) using a modern Tkinter GUI.
 - **Visual Feedback**: Real-time visualization of the agent's progress, including cumulative rewards, moves made, and current score.
-- **Custom Window Icon**: Custom icons have been added for the window, enhancing the visual experience.
 
 ## Installation
 ### Requirements
