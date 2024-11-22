@@ -28,8 +28,8 @@ pip install -r requirements.txt
 ## How to Run
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mxweir/ML-GAME-2048.git
-   cd ML-GAME-2048
+   git clone https://github.com/mxweir/RL-GAME-2048.git
+   cd RL-GAME-2048
    ```
 
 2. Install the dependencies:
