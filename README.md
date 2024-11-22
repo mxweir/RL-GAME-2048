@@ -29,7 +29,7 @@ pip install -r requirements.txt
 1. Clone the repository:
    ```bash
    git clone https://github.com/mxweir/ML-GAME-2048.git
-   cd 2048-rl-agent
+   cd ML-GAME-2048
    ```
 
 2. Install the dependencies:
