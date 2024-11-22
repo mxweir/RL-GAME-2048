@@ -21,14 +21,14 @@ GRID_SIZE = 4
 CELL_SIZE = 100
 MARGIN = 10
 SCREEN_SIZE = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * MARGIN
-INFO_HEIGHT = 260  # Erhöhte Höhe für zusätzliche Infos, damit alles sichtbar ist
+INFO_HEIGHT = 260 
 SCREEN_HEIGHT = SCREEN_SIZE + INFO_HEIGHT
 
 class Graphics2048:
     def __init__(self, game, agent):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_HEIGHT))
-        pygame.display.set_caption("2048")
+        pygame.display.set_caption("Learn 2048 | mxweir")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 48)
         self.info_font = pygame.font.Font(None, 36)
@@ -38,7 +38,7 @@ class Graphics2048:
         self.cumulative_reward = 0
         self.moves_made = 0
         self.improvements = 0
-        self.agent_running = False  # Hinzufügen einer Instanzvariable für den Agentenstatus
+        self.agent_running = False 
 
     def set_agent_status(self, status):
         self.agent_running = status
@@ -84,26 +84,28 @@ class Graphics2048:
         agent_info_y_start = SCREEN_SIZE + 60
         spacing = 40
 
-        # Zeichne den Agentenstatus
-        agent_status_text = "Running" if self.agent_running else "Stopped"
-        agent_status_display = self.info_font.render(f"Agent: {agent_status_text}", True, FONT_COLOR)
-        self.screen.blit(agent_status_display, (agent_info_x, agent_info_y_start))
+        
 
         # Zeichne die kumulierte Belohnung
         cumulative_reward_text = self.info_font.render(f"Cumulative Reward: {self.cumulative_reward}", True, FONT_COLOR)
-        self.screen.blit(cumulative_reward_text, (agent_info_x, agent_info_y_start + spacing))
+        self.screen.blit(cumulative_reward_text, (agent_info_x, agent_info_y_start))
 
         # Zeichne die Anzahl der Züge
         moves_text = self.info_font.render(f"Moves Made: {self.moves_made}", True, FONT_COLOR)
-        self.screen.blit(moves_text, (agent_info_x, agent_info_y_start + 2 * spacing))
+        self.screen.blit(moves_text, (agent_info_x, agent_info_y_start + spacing))
 
         # Zeichne die Anzahl der Verbesserungen
         improvements_text = self.info_font.render(f"Improvements: {self.improvements}", True, FONT_COLOR)
-        self.screen.blit(improvements_text, (agent_info_x, agent_info_y_start + 3 * spacing))
+        self.screen.blit(improvements_text, (agent_info_x, agent_info_y_start + 2 * spacing))
+
+        # Zeichne den Agentenstatus
+        agent_status_text = "Running" if self.agent_running else "Stopped"
+        agent_status_display = self.info_font.render(f"Agent: {agent_status_text}", True, FONT_COLOR)
+        self.screen.blit(agent_status_display, (agent_info_x, agent_info_y_start + 3.3 * spacing))
 
         # Zeichne die Anleitung zum Starten und Stoppen des Agenten
         instructions_text = self.info_font.render("Press 'A' to Start/Stop Agent", True, FONT_COLOR)
-        self.screen.blit(instructions_text, (MARGIN, SCREEN_SIZE + 200))
+        self.screen.blit(instructions_text, (MARGIN, SCREEN_SIZE + 220))
 
     def update_agent_info(self, reward):
         self.cumulative_reward += reward
