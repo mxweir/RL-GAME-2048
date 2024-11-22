@@ -28,7 +28,7 @@ pip install -r requirements.txt
 ## How to Run
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your_username/2048-rl-agent.git
+   git clone https://github.com/mxweir/2048-rl-agent.git
    cd 2048-rl-agent
    ```
 
