@@ -6,9 +6,13 @@ import pygame
 import threading
 import time
 
+# Neue Variable zum Verfolgen des Agent-Status
+agent_running = False
+
 def agent_training_thread(game, agent, graphics):
+    global agent_running
     while True:
-        if not game.is_game_over():
+        if agent_running and not game.is_game_over():
             previous_board = game.board.copy()  # Speichere den vorherigen Zustand für die Animation
             state = game.board.copy()
             
@@ -30,8 +34,11 @@ def agent_training_thread(game, agent, graphics):
 
             # Wartezeit zwischen den Zügen des Agenten, um die GUI zu entlasten
             time.sleep(0.1)
-        else:
-            # Falls das Spiel vorbei ist, neu starten
+
+        elif game.is_game_over():
+            # Speichere das Modell nach Ende jeder Episode
+            agent.save_model()
+            print("Modell gespeichert.")
             time.sleep(2)  # Kleine Pause, um die Game-Over-Nachricht anzuzeigen
             game.__init__()  # Setzt das Spiel zurück
 
@@ -51,6 +58,23 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and not agent_running:
+                    game.move('up')
+                elif event.key == pygame.K_DOWN and not agent_running:
+                    game.move('down')
+                elif event.key == pygame.K_LEFT and not agent_running:
+                    game.move('left')
+                elif event.key == pygame.K_RIGHT and not agent_running:
+                    game.move('right')
+                elif event.key == pygame.K_a:
+                    # Start oder stoppe den Agenten mit Taste 'A'
+                    agent_running = not agent_running
+                    graphics.set_agent_status(agent_running)  # Aktualisiere den Agentenstatus in der Grafik
+                elif event.key == pygame.K_r and game.is_game_over():
+                    # Reset des Spiels nach Game Over
+                    game = Game2048()
+                    graphics = Graphics2048(game, agent)
 
         # Update des Spielfelds (ohne Lernen im Hauptthread)
         graphics.update_display()

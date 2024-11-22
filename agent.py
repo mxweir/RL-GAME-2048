@@ -1,43 +1,52 @@
 import numpy as np
-import random
+import pickle
+import os
 
 class QLearningAgent:
-    def __init__(self, actions, learning_rate=0.1, discount_factor=0.9, exploration_rate=1.0, exploration_decay=0.995):
-        self.q_table = {}  # Q-Table wird dynamisch gefüllt
+    def __init__(self, actions, alpha=0.1, gamma=0.9, epsilon=0.1, model_file='qtable.pkl'):
         self.actions = actions
-        self.learning_rate = learning_rate
-        self.discount_factor = discount_factor
-        self.exploration_rate = exploration_rate
-        self.exploration_decay = exploration_decay
-
-    def get_state_key(self, state):
-        return tuple(state.flatten())  # Zustand als flacher Tupel zur Speicherung in der Q-Tabelle
+        self.alpha = alpha  # Lernrate
+        self.gamma = gamma  # Diskontierungsfaktor
+        self.epsilon = epsilon  # Explorationsrate
+        self.q_table = {}
+        self.model_file = model_file
+        self.load_model()  # Versuche, das Modell zu laden
 
     def choose_action(self, state):
-        # Epsilon-Greedy-Strategie
-        if np.random.rand() < self.exploration_rate:
-            return random.choice(self.actions)
+        if np.random.uniform(0, 1) < self.epsilon:
+            return np.random.choice(self.actions)
         else:
-            state_key = self.get_state_key(state)
-            if state_key not in self.q_table:
-                self.q_table[state_key] = np.zeros(len(self.actions))
-            return self.actions[np.argmax(self.q_table[state_key])]
+            return self.get_best_action(state)
 
-    def learn(self, current_state, action, reward, next_state):
-        state_key = self.get_state_key(current_state)
-        next_state_key = self.get_state_key(next_state)
+    def get_best_action(self, state):
+        state_str = str(state)
+        if state_str not in self.q_table:
+            self.q_table[state_str] = np.zeros(len(self.actions))
+        return self.actions[np.argmax(self.q_table[state_str])]
 
-        if state_key not in self.q_table:
-            self.q_table[state_key] = np.zeros(len(self.actions))
-        if next_state_key not in self.q_table:
-            self.q_table[next_state_key] = np.zeros(len(self.actions))
+    def learn(self, state, action, reward, next_state):
+        state_str = str(state)
+        next_state_str = str(next_state)
 
-        current_q = self.q_table[state_key][self.actions.index(action)]
-        max_future_q = np.max(self.q_table[next_state_key])
-        
-        # Q-Learning-Formel
-        new_q = (1 - self.learning_rate) * current_q + self.learning_rate * (reward + self.discount_factor * max_future_q)
-        self.q_table[state_key][self.actions.index(action)] = new_q
+        if state_str not in self.q_table:
+            self.q_table[state_str] = np.zeros(len(self.actions))
 
-        # Exploration reduzieren
-        self.exploration_rate *= self.exploration_decay
+        if next_state_str not in self.q_table:
+            self.q_table[next_state_str] = np.zeros(len(self.actions))
+
+        action_index = self.actions.index(action)
+        predict = self.q_table[state_str][action_index]
+        target = reward + self.gamma * np.max(self.q_table[next_state_str])
+        self.q_table[state_str][action_index] += self.alpha * (target - predict)
+
+    def save_model(self):
+        with open(self.model_file, 'wb') as f:
+            pickle.dump(self.q_table, f)
+
+    def load_model(self):
+        if os.path.exists(self.model_file):
+            with open(self.model_file, 'rb') as f:
+                self.q_table = pickle.load(f)
+            print("Modell geladen.")
+        else:
+            print("Kein gespeichertes Modell gefunden, starte neues Training.")
